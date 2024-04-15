@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductControleler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Cache;
@@ -40,26 +41,46 @@ Route::get('/users/bernarda/cache', function (Request $request){
     dd(json_decode($users));
 });
 
-Route::get('/products/v1', function(Request $request){
-    return redirect()-route('products.list'); // redirecionamento com o apelido das rotas
+
+
+
+
+// Define um grupo de rotas prefixadas com '/admin'.
+Route::prefix('admin')->group(function() {
+
+    // Define uma rota GET para '/admin/users'.
+    Route::get('/users', function (Request $request) {
+
+        // Retorna uma resposta JSON indicando sucesso e uma mensagem específica para usuários do admin.
+        return response()->json(['success' => true, 'msg' => "Users do Admin"]);
+    });
+
+    // Define uma rota GET para '/admin/categories'.
+    Route::get('/categories', function (Request $request) {
+
+        // Retorna uma resposta JSON indicando sucesso e uma mensagem específica para categorias do admin.
+        return response()->json(['success' => true, 'msg' => "Categorias do Admin"]);
+    });
 });
 
-Route::get('/products', function(Request $request){
-    return response()->json(["success" => true, 'msg' => "listando os produtos" ]);
 
-})->name('products.list'); // apelido; alias; nome da minha rota
 
-// grupo de rotas especificas:
-    Route::prefix('admin')->group(function (){
-        Route::get('users', function (Request $request){
-            return response()->json(["success" => true, "msg" => "Users do admin"]);
-        });
-        Route::get('categories', function (Request $request){
-            return response()->json(["success" => true, "msg" => "Users do categories"]);
-        });
-    });
-    // para acessar essas rotas coloque o /... 'rota que deseja'
+// Agrupando por nomes, apenas por código, não altera a rota (neste caso a rota é /products)
+Route::name('products.')->group(function() {
+    // Define uma rota GET para '/products' e atribui o nome 'list' a esta rota.
+    Route::get('/products', function (Request $request) {
+        return response()->json(['success' => true, 'msg' => "Listando Produtos..."]);
+    })->name('list');
 
-    Route::prefix('products. ')->group(function (){
+    // Define uma outra rota GET para '/products' e atribui o nome 'show' a esta rota.
+    Route::get('/products/{id}', function (Request $request) {
+        return response()->json(['success' => true, 'msg' => "Listando Produtos..."]);
+    })->name('show');
+});
 
-    });
+// Utilizamos isto para definir métodos de rota para serem usados no código
+// EXEMPLO:
+Route::get('/products/v1', function(Request $request) {
+    // Redireciona para a rota com o nome 'products.list'
+    return redirect()->route('products.list');
+});
