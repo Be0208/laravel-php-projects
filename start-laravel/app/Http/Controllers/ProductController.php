@@ -16,5 +16,4 @@ class ProductControleler extends Controller
 
         return response()->json(["success" => true, "msg" => "Lista de Produtos!!", 'data' => $products]);
     }
-
 }
