@@ -41,11 +41,25 @@ Route::get('/users/bernarda/cache', function (Request $request){
 });
 
 Route::get('/products/v1', function(Request $request){
-    return redirect()-route('products-list'); // redirecionamento com o apelido das rotas
+    return redirect()-route('products.list'); // redirecionamento com o apelido das rotas
 });
 
 Route::get('/products', function(Request $request){
     return response()->json(["success" => true, 'msg' => "listando os produtos" ]);
 
-})->name('products-list'); // apelido; alias; nome da minha rota
+})->name('products.list'); // apelido; alias; nome da minha rota
 
+// grupo de rotas especificas:
+    Route::prefix('admin')->group(function (){
+        Route::get('users', function (Request $request){
+            return response()->json(["success" => true, "msg" => "Users do admin"]);
+        });
+        Route::get('categories', function (Request $request){
+            return response()->json(["success" => true, "msg" => "Users do categories"]);
+        });
+    });
+    // para acessar essas rotas coloque o /... 'rota que deseja'
+
+    Route::prefix('products. ')->group(function (){
+
+    });
