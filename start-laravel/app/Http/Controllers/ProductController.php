@@ -2,35 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use Dflydev\DotAccessData\Data;
-use GuzzleHttp\Psr7\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
-
-class ProductControleler extends Controller
+class ProductController extends Controller
 {
-    public function listAll() {
+    public function listAll(){
         $productsCache = Cache::get('products');
-        $products = [];
+        $productsCollect = collect([]);
 
-        if ($productsCache !== null) {
-            $products = json_encode($productsCache);
-        };
-        return response()->json(['success' => true, 'msg' => "Listagem de Produtos.", 'data' => $products]);
+        if($productsCache !== null){
+            $productsCollect = collect(json_decode($productsCache));
+        }
+
+        return response()->json(['success' => true, 'msg' => "Litagem de produtos.", 'data' => $productsCollect]);
     }
 
-    public function create(Request $request) {
+    public function create(Request $request){
         $productsCache = Cache::get('products');
-        $products = [];
+        $products = collect([]);
 
         $data = $request->json()->all();
 
-        if ($productsCache !== null) {
-            $products = json_decode($productsCache);
-        };
-        array_push($products, $data);
-        Cache::put('products', json_encode($products));
+        if($productsCache !== null){
+            $products = collect(json_decode($productsCache));
+        }
 
-        return response()->json(['success' => true, 'msg' => "Produto Criado com Sucesso."]);
+        $products->push($data);
+
+        Cache::put('products', $products->toJson());
+
+        return response()->json(['success' => true, 'msg' => "Produto criado com sucesso."]);
     }
 }

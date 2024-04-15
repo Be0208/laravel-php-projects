@@ -11,7 +11,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json(['success' => true, 'msg' => "Litagem de categorias."]);
     }
 
     /**
@@ -19,7 +19,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return response()->json(['success' => true, 'msg' => "Create de categorias."]);
     }
 
     /**
@@ -27,7 +27,7 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return response()->json(['success' => true, 'msg' => "Store/Save de categorias."]);
     }
 
     /**
@@ -35,7 +35,7 @@ class CategoryController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return response()->json(['success' => true, 'msg' => "Lita a categoria, $id."]);
     }
 
     /**
@@ -43,7 +43,7 @@ class CategoryController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return response()->json(['success' => true, 'msg' => "Edit a categoria, $id."]);
     }
 
     /**
@@ -51,7 +51,7 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        return response()->json(['success' => true, 'msg' => "Update a categoria, $id."]);
     }
 
     /**
@@ -59,6 +59,6 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        return response()->json(['success' => true, 'msg' => "Delete a categoria, $id."]);
     }
 }

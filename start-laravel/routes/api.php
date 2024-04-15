@@ -1,9 +1,12 @@
 <?php
 
-use App\Http\Controllers\ProductControleler;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Cache;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -16,71 +19,47 @@ use Illuminate\Support\Facades\Cache;
 |
 */
 
-// mexendo com a marequisição e implementação de dados na api
-
 Route::get('/', function (Request $request){
-    return response()->json(['success' => true, 'msg' => 'Hello world!']);
+    return response()->json(['success' => true, 'msg' => "Hello world!"]);
 });
 
-Route::post('/users', function (Request $request){
-    $data = $request->json()->all();
-    //dd($data); //envia e mata o servidor || mostra o valor a variavel
+Route::post('/users', [UserController::class, 'create']);
 
-    Cache::put('users', json_encode($data));
+Route::get('/users/{id}', function(Request $request, $id){
 
-    return response()->json(['success' => true, 'msg' => 'Usuario salvo!']);
+    return response()->json(['success' => true, 'msg' => "Você mandou o user {$id}!"]);
 });
 
-Route::get('/users/{id}', function (Request $request, $id){
-    return response()->json(["success' => false, 'msg' => `Voce mandou o user {$id}!"]);
+Route::get('/users/marcelo/cache', function(Request $request){
+    $user = json_decode(Cache::get('user'));
+
+    dd($user->name);
 });
 
-Route::get('/users/bernarda/cache', function (Request $request){
-    $users = Cache::get('users');
-
-    dd(json_decode($users));
-});
-
-
-
-
-
-// Define um grupo de rotas prefixadas com '/admin'.
-Route::prefix('admin')->group(function() {
-
-    // Define uma rota GET para '/admin/users'.
-    Route::get('/users', function (Request $request) {
-
-        // Retorna uma resposta JSON indicando sucesso e uma mensagem específica para usuários do admin.
-        return response()->json(['success' => true, 'msg' => "Users do Admin"]);
+//MUDA A URL
+Route::prefix('sandro')->group(function(){
+    Route::get('/users', function(Request $request){
+        return response()->json(['success'=> true, 'msg' => "Users do admin"]);
     });
 
-    // Define uma rota GET para '/admin/categories'.
-    Route::get('/categories', function (Request $request) {
-
-        // Retorna uma resposta JSON indicando sucesso e uma mensagem específica para categorias do admin.
-        return response()->json(['success' => true, 'msg' => "Categorias do Admin"]);
+    Route::get('/categories', function(Request $request){
+        return response()->json(['success'=> true, 'msg' => "Categorias do admin"]);
     });
 });
 
+//NAO MUDA A URL - APENAS PARA REFERENCIA NO CODIGO
+Route::name('products. ')->group(function(){
+    Route::get('/products', [ProductController::class, 'listAll'])->name('list');
 
+    Route::post('/products', [ProductController::class, 'create'])->name('create');
 
-// Agrupando por nomes, apenas por código, não altera a rota (neste caso a rota é /products)
-Route::name('products.')->group(function() {
-    // Define uma rota GET para '/products' e atribui o nome 'list' a esta rota.
-    Route::get('/products', function (Request $request) {
-        return response()->json(['success' => true, 'msg' => "Listando Produtos..."]);
-    })->name('list');
-
-    // Define uma outra rota GET para '/products' e atribui o nome 'show' a esta rota.
-    Route::get('/products/{id}', function (Request $request) {
-        return response()->json(['success' => true, 'msg' => "Listando Produtos..."]);
+    Route::get('/products/{id}', function(Request $request){
+        return response()->json(['success' => true, 'msg' => "Litando os produtos..."]);
     })->name('show');
 });
 
-// Utilizamos isto para definir métodos de rota para serem usados no código
-// EXEMPLO:
-Route::get('/products/v1', function(Request $request) {
-    // Redireciona para a rota com o nome 'products.list'
+Route::get('/products/v1', function(Request $request){
     return redirect()->route('products.list');
 });
+
+Route::resource('/categories', CategoryController::class);
