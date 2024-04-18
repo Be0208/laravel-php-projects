@@ -36,30 +36,6 @@ Route::get('/users/marcelo/cache', function(Request $request){
     dd($user->name);
 });
 
-//MUDA A URL
-Route::prefix('sandro')->group(function(){
-    Route::get('/users', function(Request $request){
-        return response()->json(['success'=> true, 'msg' => "Users do admin"]);
-    });
-
-    Route::get('/categories', function(Request $request){
-        return response()->json(['success'=> true, 'msg' => "Categorias do admin"]);
-    });
-});
-
-//NAO MUDA A URL - APENAS PARA REFERENCIA NO CODIGO
-Route::name('products. ')->group(function(){
-    Route::get('/products', [ProductController::class, 'listAll'])->name('list');
-
-    Route::post('/products', [ProductController::class, 'create'])->name('create');
-
-    Route::get('/products/{id}', function(Request $request){
-        return response()->json(['success' => true, 'msg' => "Litando os produtos..."]);
-    })->name('show');
-});
-
-Route::get('/products/v1', function(Request $request){
-    return redirect()->route('products.list');
-});
+Route::resource('/products', ProductController::class);
 
 Route::resource('/categories', CategoryController::class);
