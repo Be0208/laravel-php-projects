@@ -59,9 +59,6 @@ class ProductController extends Controller
         if($product == null){
             return response()->json(['success' => false, 'msg' => "Produto não encontrado."], 404);
         }
-
-
-
         return response()->json(['success' => true, 'msg' => "Listado produto.", 'data' => $product]);
     }
 
