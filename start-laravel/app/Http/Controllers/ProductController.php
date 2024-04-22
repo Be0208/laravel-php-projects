@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Service\CacheService;
+use App\Services\CacheService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -43,7 +43,7 @@ class ProductController extends Controller
 
         $product = $products->firstWhere('id', $id);
         if($product == null){
-            return response()->json(['success' => false, 'msg' => "Produto não encontrado."], 404);
+            return response()->json(['success' => false, 'msg' => "Produto nao encontrado."], 404);
         }
 
         return response()->json(['success' => true, 'msg' => "Listado produto.", 'data' => $product]);
@@ -66,8 +66,6 @@ class ProductController extends Controller
 
 
             $product = $products->firstWhere('id', $id);
-
-
             if($product == null){
                 return response()->json(['success' => false, 'msg' => "Produto nao encontrado."], 404);
             }
