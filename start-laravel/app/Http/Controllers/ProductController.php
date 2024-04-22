@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Service\CacheService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -12,12 +13,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $productsCache = Cache::get('products');
-        $productsCollect = collect([]);
-
-        if($productsCache !== null){
-            $productsCollect = collect(json_decode($productsCache));
-        }
+        $productsCollect = CacheService::getProducts();
 
         return response()->json(['success' => true, 'msg' => "Litagem de produtos.", 'data' => $productsCollect]);
     }
@@ -27,14 +23,9 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $productsCache = Cache::get('products');
-        $products = collect([]);
+        $products = CacheService::getProducts(); // codigo aproveitado
 
         $data = $request->json()->all();
-
-        if($productsCache !== null){
-            $products = collect(json_decode($productsCache));
-        }
 
         $products->push($data);
 
@@ -55,6 +46,8 @@ class ProductController extends Controller
             $products = collect(json_decode($productsCache));
         }
 
+
+
         $product = $products->firstWhere('id', $id);
         if($product == null){
             return response()->json(['success' => false, 'msg' => "Produto não encontrado."], 404);
@@ -71,12 +64,16 @@ class ProductController extends Controller
     public function update(Request $request, int $id)
     {
         if(collect($request)->has('name', 'price')){
+
+
             $productsCache = Cache::get('products');
             $products = collect([]);
 
             if($productsCache !== null){
                 $products = collect(json_decode($productsCache));
             }
+
+
 
             $product = $products->firstWhere('id', $id);
 
