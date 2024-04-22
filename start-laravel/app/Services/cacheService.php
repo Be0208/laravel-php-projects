@@ -19,4 +19,3 @@ class CacheService {
         Cache::put('products', $products->toJson());
     }
 }
-

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\CacheService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -21,17 +22,32 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $products = CacheService::getProducts(); // codigo aproveitado
+    public function store(Request $request) {
+        try {
+            $validated = $request->validate([
+                'id' => 'required',
+                'name' => 'required',
+                'price' => 'required'
+            ]);
 
-        $data = $request->json()->all();
+            // Supondo que CacheService seja acessível e seus métodos estejam corretamente definidos
+            $products = CacheService::getProducts();
 
-        $products->push($data);
+            // Supondo que você esteja recebendo dados JSON no corpo da solicitação
+            $data = $request->json()->all();
 
-        CacheService::updateProducts($products);
+            // Adiciona os dados do novo produto aos produtos existentes
+            $products->push($data);
 
-        return response()->json(['success' => true, 'msg' => "Produto criado com sucesso."]);
+            // Atualiza a cache com os produtos atualizados
+            CacheService::updateProducts($products);
+
+            return response()->json(['success' => true, 'msg' => "Produto criado com sucesso."]);
+
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['success' => false, 'msg' => "Erro ao criar produto: " . $e->getMessage()]);
+        }
     }
 
     /**
@@ -96,11 +112,13 @@ class ProductController extends Controller
         };
 
         $filtred = $products->reject(function ($item) use ($id) {
-            return $item->id == $id;
+            if(collect($item)->has('id')) {
+                return $item->id == $id;
+            }
         });
 
         CacheService::updateProducts($filtred);
 
-        return response()->json(['success' => true, 'msg' => "Delete a categoria, $id."]);
+        return response()->json(['success' => true, 'msg' => "Produto deletado: $id."]);
     }
 }
