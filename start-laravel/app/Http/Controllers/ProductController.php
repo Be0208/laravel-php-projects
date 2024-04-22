@@ -56,16 +56,10 @@ class ProductController extends Controller
     {
         if(collect($request)->has('name', 'price')){
 
-
-            $productsCache = Cache::get('products');
-            $products = collect([]);
-
-            if($productsCache !== null){
-                $products = collect(json_decode($productsCache));
-            }
-
+            $products = CacheService::getProducts();
 
             $product = $products->firstWhere('id', $id);
+
             if($product == null){
                 return response()->json(['success' => false, 'msg' => "Produto nao encontrado."], 404);
             }
@@ -73,7 +67,7 @@ class ProductController extends Controller
             $product->name = $request->name;
             $product->price = $request->price;
 
-            $index = $products->search(function ($item) use ($id) {
+            $index = $products->first(function ($item) use ($id) {
                 return $item->id == $id;
             });
 
@@ -91,8 +85,22 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
+        $products = CacheService::getProducts();
+
+        $product = $products->firstWhere('id', $id);
+
+        if($product == null){
+            return response()->json(['success' => false, 'msg' => "Produto nao encontrado."], 404);
+        };
+
+        $filtred = $products->reject(function ($item) use ($id) {
+            return $item->id == $id;
+        });
+
+        CacheService::updateProducts($filtred);
+
         return response()->json(['success' => true, 'msg' => "Delete a categoria, $id."]);
     }
 }
