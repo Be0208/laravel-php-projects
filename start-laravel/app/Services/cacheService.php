@@ -14,5 +14,10 @@ class CacheService {
 
         return $productsCollect;
     }
+
+    static public function updateProducts($products){
+        Cache::put('products', $products->toJson());
+    }
+
 }
 

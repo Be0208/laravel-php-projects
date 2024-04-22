@@ -29,7 +29,7 @@ class ProductController extends Controller
 
         $products->push($data);
 
-        Cache::put('products', $products->toJson());
+        CacheService::updateProducts($products);
 
         return response()->json(['success' => true, 'msg' => "Produto criado com sucesso."]);
     }
@@ -39,21 +39,12 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        $productsCache = Cache::get('products');
-        $products = collect([]);
-
-        if($productsCache !== null){
-            $products = collect(json_decode($productsCache));
-        }
-
-
+        $products = CacheService::getProducts();
 
         $product = $products->firstWhere('id', $id);
         if($product == null){
             return response()->json(['success' => false, 'msg' => "Produto não encontrado."], 404);
         }
-
-
 
         return response()->json(['success' => true, 'msg' => "Listado produto.", 'data' => $product]);
     }
@@ -74,12 +65,11 @@ class ProductController extends Controller
             }
 
 
-
             $product = $products->firstWhere('id', $id);
 
 
             if($product == null){
-                return response()->json(['success' => false, 'msg' => "Produto não encontrado."], 404);
+                return response()->json(['success' => false, 'msg' => "Produto nao encontrado."], 404);
             }
 
             $product->name = $request->name;
@@ -91,14 +81,13 @@ class ProductController extends Controller
 
             $products->replace($index, collect($product)->all());
 
-            Cache::put('products', $products->toJson());
+            CacheService::updateProducts($products);
 
             return response()->json(['success' => true, 'msg' => "Produto atualizado com sucesso."]);
 
         }
 
-
-        return response()->json(['success' => false, 'msg' => "Campo nome e preço são obrigatórios."], 400);
+        return response()->json(['success' => false, 'msg' => "Campo nome e preco sao obrigatorios."], 400);
     }
 
     /**
