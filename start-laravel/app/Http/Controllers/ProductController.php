@@ -112,9 +112,7 @@ class ProductController extends Controller
         };
 
         $filtred = $products->reject(function ($item) use ($id) {
-            if(collect($item)->has('id')) {
-                return $item->id == $id;
-            }
+            return $item->id == $id;
         });
 
         CacheService::updateProducts($filtred);

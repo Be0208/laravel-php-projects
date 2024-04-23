@@ -19,22 +19,22 @@ use Illuminate\Support\Facades\Cache;
 |
 */
 
-// Route::get('/', function (Request $request){
-//     return response()->json(['success' => true, 'msg' => "Hello world!"]);
-// });
+Route::get('/', function (Request $request){
+    return response()->json(['success' => true, 'msg' => "Hello world!"]);
+});
 
-// Route::post('/users', [UserController::class, 'create']);
+Route::post('/users', [UserController::class, 'create']);
 
-// Route::get('/users/{id}', function(Request $request, $id){
+Route::get('/users/{id}', function(Request $request, $id){
 
-//     return response()->json(['success' => true, 'msg' => "Você mandou o user {$id}!"]);
-// });
+    return response()->json(['success' => true, 'msg' => "Você mandou o user {$id}!"]);
+});
 
-// Route::get('/users/marcelo/cache', function(Request $request){
-//     $user = json_decode(Cache::get('user'));
+Route::get('/users/marcelo/cache', function(Request $request){
+    $user = json_decode(Cache::get('user'));
 
-//     dd($user->name);
-// });
+    dd($user->name);
+});
 
 Route::resource('/products', ProductController::class);
 
