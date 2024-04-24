@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Services\CacheService;
+use Dotenv\Exception\ValidationException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -14,15 +16,16 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $productsCollect = CacheService::getProducts();
+        $products = CacheService::getProducts();
 
-        return response()->json(['success' => true, 'msg' => "Litagem de produtos.", 'data' => $productsCollect]);
+        return response()->json(['success' => true, 'msg' => "Listagem de produtos.", 'data' => $products]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) {
+
+     public function store(Request $request) {
         try {
             $request->validate([
                 'name'=> 'required',
@@ -61,15 +64,9 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
-        $products = CacheService::getProducts();
-
-        $product = $products->firstWhere('id', $id);
-        if($product == null){
-            return response()->json(['success' => false, 'msg' => "Produto nao encontrado."], 404);
-        }
-
+        $product = $request->get('product');
         return response()->json(['success' => true, 'msg' => "Listado produto.", 'data' => $product]);
     }
 
@@ -79,19 +76,18 @@ class ProductController extends Controller
     public function update(Request $request, int $id)
     {
         if(collect($request)->has('name', 'price')){
-
             $products = CacheService::getProducts();
 
             $product = $products->firstWhere('id', $id);
 
             if($product == null){
-                return response()->json(['success' => false, 'msg' => "Produto nao encontrado."], 404);
+                return response()->json(['success' => false, 'msg' => "Produto não encontrado."], 404);
             }
 
             $product->name = $request->name;
             $product->price = $request->price;
 
-            $index = $products->first(function ($item) use ($id) {
+            $index = $products->search(function ($item) use ($id) {
                 return $item->id == $id;
             });
 
@@ -103,28 +99,32 @@ class ProductController extends Controller
 
         }
 
-        return response()->json(['success' => false, 'msg' => "Campo nome e preco sao obrigatorios."], 400);
+        return response()->json(['success' => false, 'msg' => "Campo nome e preço são obrigatórios."], 400);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
         $products = CacheService::getProducts();
 
         $product = $products->firstWhere('id', $id);
 
         if($product == null){
-            return response()->json(['success' => false, 'msg' => "Produto nao encontrado."], 404);
-        };
+            return response()->json(['success' => false, 'msg' => "Produto não encontrado."], 404);
+        }
 
-        $filtred = $products->reject(function ($item) use ($id) {
-            return $item->id == $id;
-        });
+        $filtered = $products->reject(function ($item) use ($id){
+            if(collect($item)->has('id')){
+                return $item->id == $id;
+            }
 
-        CacheService::updateProducts($filtred);
+            return false;
+        })->values()->collect();
 
-        return response()->json(['success' => true, 'msg' => "Produto deletado: $id."]);
+        CacheService::updateProducts($filtered);
+
+        return response()->json(['success' => true, 'msg' => "Delete produto, $id."]);
     }
 }

@@ -1,10 +1,10 @@
 <?php
-
 use App\Http\Controllers\BuyController;
+use App\Http\Controllers\SellController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\SellController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\ExistProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Cache;
@@ -38,7 +38,8 @@ Route::get('/users/marcelo/cache', function(Request $request){
     dd($user->name);
 });
 
-Route::resource('/products', ProductController::class);
+Route::resource('/products', ProductController::class)->except(['show']);
+Route::get('/products/{id}', [ProductController::class, 'show'])->middleware(ExistProduct::class);
 
 Route::resource('/categories', CategoryController::class);
 
