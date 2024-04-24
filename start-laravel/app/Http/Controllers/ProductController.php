@@ -61,10 +61,8 @@ class ProductController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Request $request, string $id)
+
+    public function show(Request $request)
     {
         $product = $request->get('product');
         return response()->json(['success' => true, 'msg' => "Listado produto.", 'data' => $product]);
@@ -76,13 +74,9 @@ class ProductController extends Controller
     public function update(Request $request, int $id)
     {
         if(collect($request)->has('name', 'price')){
-            $products = CacheService::getProducts();
 
-            $product = $products->firstWhere('id', $id);
-
-            if($product == null){
-                return response()->json(['success' => false, 'msg' => "Produto não encontrado."], 404);
-            }
+            $product = $request->get('product');
+            $products = $request->get('products');
 
             $product->name = $request->name;
             $product->price = $request->price;

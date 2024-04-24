@@ -50,7 +50,7 @@
             "@php artisan key:generate --ansi"
         ],
         "dev": [
-            "@php artisan serve --host=0.0.0.0"
+            "@php artisan serve"
         ]
     },
     "extra": {
