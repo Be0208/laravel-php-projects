@@ -24,10 +24,18 @@ class ProductController extends Controller
      */
     public function store(Request $request) {
         try {
-            $validated = $request->validate([
+            $request->validate([
+                'name'=> 'required',
+                'price'=> 'required',
                 'id' => 'required',
-                'name' => 'required',
-                'price' => 'required'
+                'stock' => 'required'
+
+            ], [
+                'name.required' => 'Campo nome é obrigatório.',
+                'price.required' => 'Campo preço é obrigatório.',
+                'id.required' => 'Campo id é obrigatório.',
+                'stock.required' => 'Campo stock é obrigatório.'
+
             ]);
 
             // Supondo que CacheService seja acessível e seus métodos estejam corretamente definidos
