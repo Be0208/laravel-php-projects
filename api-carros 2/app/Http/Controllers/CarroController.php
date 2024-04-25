@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\CacheService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -25,19 +26,19 @@ class CarroController extends Controller
     public function store(Request $request)
     {
 
-    if(!$request->has(['id','modelo', 'marca'])){
-        return response()->json(['error' => "Campos obrigatórios ausentes"]);
-      }
+        if (!$request->has(['id', 'modelo', 'marca'])) {
+            return response()->json(['error' => "Campos obrigatórios ausentes"]);
+        }
 
-     $carros = CacheService::getCarros();
+        $carros = CacheService::getCarros();
 
-     $carro = $request->json()->all();
+        $carro = $request->json()->all();
 
-     $carros->push($carro);
+        $carros->push($carro);
 
-     CacheService::updateCarros($carros);
+        CacheService::updateCarros($carros);
 
-      return response()->json(['success' => true, 'mgs' => "Carro adicionado com sucesso!"]);
+        return response()->json(['success' => true, 'mgs' => "Carro adicionado com sucesso!"]);
     }
 
     /**
@@ -50,7 +51,7 @@ class CarroController extends Controller
 
         $carro = $carros->firstWhere('id', $id);
 
-        if($carro == null){
+        if ($carro == null) {
             return response()->json(['success' => false, 'msg' => "carro não encontrado."], 404);
         }
 
@@ -65,36 +66,34 @@ class CarroController extends Controller
      */
     public function update(Request $request, int $id)
     {
-        if(!collect($request)->has('modelo', 'marca')){
+        if (!collect($request)->has('modelo', 'marca')) {
             return response()->json(['success' => false, 'msg' => "Campos não informados!"]);
         }
 
-         $carros = CacheService::getCarros();
+        $carros = CacheService::getCarros();
 
-         $carro = $carros->firstWhere('id', $id);
-
-
-            if($carro == null){
-                return response()->json(['success' => false, 'msg' => "carro não encontrado."], 404);
-            }
+        $carro = $carros->firstWhere('id', $id);
 
 
-         $carrosEditado = $carros->map(function($item) use ($request, $id) {
+        if ($carro == null) {
+            return response()->json(['success' => false, 'msg' => "carro não encontrado."], 404);
+        }
 
-            if($item->id == $id){
+
+        $carrosEditado = $carros->map(function ($item) use ($request, $id) {
+
+            if ($item->id == $id) {
                 $item->modelo = $request->modelo;
                 $item->marca = $request->marca;
             }
 
             return $item;
-         });
+        });
 
-         CacheService::updateCarros($carrosEditado);
-
-
-         return response()->json(['success' => true, 'mgs' => "Carro editado!"]);
+        CacheService::updateCarros($carrosEditado);
 
 
+        return response()->json(['success' => true, 'mgs' => "Carro editado!"]);
     }
 
     /**
@@ -106,13 +105,13 @@ class CarroController extends Controller
         $carros = CacheService::getCarros();
 
 
-       $carrosNovo = $carros->reject(function($carro) use($id){
+        $carrosNovo = $carros->reject(function ($carro) use ($id) {
             return $carro->id == $id;
-       });
+        });
 
         CacheService::updateCarros($carrosNovo);
 
 
-    return response()->json(['success' => true, 'mgs' => "Carro excluido!"]);
+        return response()->json(['success' => true, 'mgs' => "Carro excluido!"]);
     }
 }
