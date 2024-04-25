@@ -7,7 +7,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ExistProduct
+class validateMiddlewere
 {
     /**
      * Handle an incoming request.
@@ -16,17 +16,14 @@ class ExistProduct
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $products = CacheService::getProducts();
+        $carros = CacheService::getCarros();
 
-        $product = $products->firstWhere('id', $request->route()->id);
-        
-        if($product == null){
-            return response()->json(['success' => false, 'msg' => "Produto não encontrado."], 404);
+        $carro = $carros->firstWhere('id', $request->route()->id);
+        if ($carro == null) {
+            return response()->json(['success' => false, 'msg' => "carro não encontrado."], 404);
         }
 
-        $request->attributes->add(['product' => $product]);
-        $request->attributes->add(['products' => $products]);
-
+        $request->attributes->add(['carro' => $carro]);
         return $next($request);
     }
 }

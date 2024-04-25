@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CarroController;
+use App\Http\Middleware\validateMiddlewere;
 
 /*
 |--------------------------------------------------------------------------
@@ -83,4 +84,7 @@ use App\Http\Controllers\CarroController;
 
 // });
 
-Route::resource('/carros', CarroController::class);
+Route::resource('/carros', CarroController::class)->except(['show']);
+
+Route::get('/carros/{id}', [CarroController::class, 'show'])->middleware(validateMiddlewere::class);
+

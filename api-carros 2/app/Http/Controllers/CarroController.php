@@ -44,19 +44,11 @@ class CarroController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request)
     {
-        $carros = CacheService::getCarros();
+        $carros = $request->get('carro');
 
-
-        $carro = $carros->firstWhere('id', $id);
-
-        if ($carro == null) {
-            return response()->json(['success' => false, 'msg' => "carro não encontrado."], 404);
-        }
-
-
-        return response()->json(['success' => true, 'msg' => "Listado carro.", 'data' => $carro]);
+        return response()->json(['success' => true, 'msg' => "Listando carro.", 'data' => $carros]);
     }
 
 
