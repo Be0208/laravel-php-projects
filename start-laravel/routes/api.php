@@ -37,7 +37,6 @@ Route::get('/users/marcelo/cache', function(Request $request){
     dd($user->name);
 });
 
-Route::resource('/products', ProductController::class)->except(['show']);
-Route::get('/products/{id}', [ProductController::class, 'show'])->middleware(ExistProduct::class);
+Route::resource('/products', ProductController::class);
 
 Route::resource('/categories', CategoryController::class);

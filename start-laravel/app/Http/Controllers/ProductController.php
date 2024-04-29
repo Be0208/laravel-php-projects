@@ -46,9 +46,13 @@ public function store(Request $request)
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, string $id)
+    public function show(int $id)
     {
-        $product = $request->get('product');
+        $product = Product::find($id);
+
+        if($product == null){
+            return response()->json(['success' => false, 'msg' => "Produto não encontrado."], 404);
+        }
 
         return response()->json(['success' => true, 'msg' => "Listado produto.", 'data' => $product]);
     }
@@ -59,24 +63,17 @@ public function store(Request $request)
     public function update(Request $request, int $id)
     {
         if(collect($request)->has('name', 'price')){
-            $products = Product::all();
 
-            $product = $products->firstWhere('id', $id);
+            $product = Product::find($id);
 
             if($product == null){
                 return response()->json(['success' => false, 'msg' => "Produto não encontrado."], 404);
-            }
+            };
 
             $product->name = $request->name;
-            $product->price = $request->price;
+            $product->price = $request-> price;
 
-            $index = $products->search(function ($item) use ($id) {
-                return $item->id == $id;
-            });
-
-            $products->replace($index, collect($product)->all());
-
-            CacheService::updateProducts($products);
+            $product->save();
 
             return response()->json(['success' => true, 'msg' => "Produto atualizado com sucesso."]);
 
