@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Services\CacheService;
 use Dotenv\Exception\ValidationException;
 use Illuminate\Http\Request;
@@ -15,8 +16,8 @@ class ProductController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        $products = CacheService::getProducts();
+    {// pegar os dados da minha tabela do banco de dados
+        $products = Product::all();
 
         return response()->json(['success' => true, 'msg' => "Listagem de produtos.", 'data' => $products]);
     }
@@ -28,19 +29,14 @@ class ProductController extends Controller
 public function store(Request $request)
 {
     try {
-        $validatedData = $request->validate([
+        $request->validate([
             'name' => 'required',
-            'price' => 'required',
-            'id' => 'required'
+            'price' => 'required'
         ]);
 
-        $products = CacheService::getProducts();
+        $products = Product::create($request->all());
 
-        $products->push($validatedData);
-
-        CacheService::updateProducts($products);
-
-        return response()->json(['success' => true, 'msg' => "Produto criado com sucesso."]);
+        return response()->json(['success' => true, 'msg' => "Produto criado com sucesso.", 'data' => $products]);
 
     } catch (\Throwable $e) {
         Log::error('Erro ao criar produto.', ['error' => $e->getMessage()]);
@@ -53,6 +49,7 @@ public function store(Request $request)
     public function show(Request $request, string $id)
     {
         $product = $request->get('product');
+
         return response()->json(['success' => true, 'msg' => "Listado produto.", 'data' => $product]);
     }
 
@@ -62,7 +59,7 @@ public function store(Request $request)
     public function update(Request $request, int $id)
     {
         if(collect($request)->has('name', 'price')){
-            $products = CacheService::getProducts();
+            $products = Product::all();
 
             $product = $products->firstWhere('id', $id);
 
@@ -93,7 +90,7 @@ public function store(Request $request)
      */
     public function destroy(int $id)
     {
-        $products = CacheService::getProducts();
+        $products = Product::all();
 
         $product = $products->firstWhere('id', $id);
 

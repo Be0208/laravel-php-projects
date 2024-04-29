@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Product;
 use App\Services\CacheService;
 use Closure;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ class ExistProduct
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $products = CacheService::getProducts();
+        $products = Product::all();
 
         $product = $products->firstWhere('id', $request->route()->id);
         if($product == null){
