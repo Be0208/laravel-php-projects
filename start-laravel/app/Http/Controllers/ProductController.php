@@ -17,7 +17,12 @@ class ProductController extends Controller
      */
     public function index()
     {// pegar os dados da minha tabela do banco de dados
+
+        //sem consição:
         $products = Product::all();
+
+        //com condição:
+        // $products = Product::where('enable', 1)->get();
 
         return response()->json(['success' => true, 'msg' => "Listagem de produtos.", 'data' => $products]);
     }
@@ -87,23 +92,12 @@ public function store(Request $request)
      */
     public function destroy(int $id)
     {
-        $products = Product::all();
-
-        $product = $products->firstWhere('id', $id);
-
+        $product = Product::find($id);
         if($product == null){
             return response()->json(['success' => false, 'msg' => "Produto não encontrado."], 404);
-        }
+        };
 
-        $filtered = $products->reject(function ($item) use ($id){
-            if(collect($item)->has('id')){
-                return $item->id == $id;
-            }
-
-            return false;
-        })->values()->collect();
-
-        CacheService::updateProducts($filtered);
+        $product->delete();
 
         return response()->json(['success' => true, 'msg' => "Delete produto, $id."]);
     }

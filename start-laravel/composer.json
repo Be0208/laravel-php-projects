@@ -50,7 +50,7 @@
             "@php artisan key:generate --ansi"
         ],
         "serve": [
-            "@php artisan serve"
+            "@php artisan serve", "set_time_limit(0)"
         ]
     },
     "extra": {
