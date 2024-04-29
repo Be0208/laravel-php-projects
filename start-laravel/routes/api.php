@@ -1,11 +1,9 @@
 <?php
-use App\Http\Controllers\BuyController;
-use App\Http\Controllers\SellController;
+
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\ExistProduct;
-use App\Http\Middleware\LogRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Cache;
@@ -39,19 +37,7 @@ Route::get('/users/marcelo/cache', function(Request $request){
     dd($user->name);
 });
 
-Route::group(['middleware' => LogRequest::class], function(){
+Route::resource('/products', ProductController::class)->except(['show']);
+Route::get('/products/{id}', [ProductController::class, 'show'])->middleware(ExistProduct::class);
 
-    Route::resource('/categories', CategoryController::class);
-    Route::resource('/products', ProductController::class)->except(['show', 'update']);
-
-    Route::resource('/buy', BuyController::class);
-    Route::resource('/sell', SellController::class);
-
-    Route::group(['middlewere' => ExistProduct::class], function(){
-        Route::get('/products/{id}', [ProductController::class, 'show']);
-        Route::put('/products/{id}', [ProductController::class, 'update']);
-    });
-
-});
-
-
+Route::resource('/categories', CategoryController::class);

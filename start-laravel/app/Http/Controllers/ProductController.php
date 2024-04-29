@@ -25,44 +25,32 @@ class ProductController extends Controller
      * Store a newly created resource in storage.
      */
 
-     public function store(Request $request) {
-        try {
-            $request->validate([
-                'name'=> 'required',
-                'price'=> 'required',
-                'id' => 'required',
-                'stock' => 'required'
+public function store(Request $request)
+{
+    try {
+        $validatedData = $request->validate([
+            'name' => 'required',
+            'price' => 'required',
+            'id' => 'required'
+        ]);
 
-            ], [
-                'name.required' => 'Campo nome é obrigatório.',
-                'price.required' => 'Campo preço é obrigatório.',
-                'id.required' => 'Campo id é obrigatório.',
-                'stock.required' => 'Campo stock é obrigatório.'
+        $products = CacheService::getProducts();
 
-            ]);
+        $products->push($validatedData);
 
-            // Supondo que CacheService seja acessível e seus métodos estejam corretamente definidos
-            $products = CacheService::getProducts();
+        CacheService::updateProducts($products);
 
-            // Supondo que você esteja recebendo dados JSON no corpo da solicitação
-            $data = $request->json()->all();
+        return response()->json(['success' => true, 'msg' => "Produto criado com sucesso."]);
 
-            // Adiciona os dados do novo produto aos produtos existentes
-            $products->push($data);
-
-            // Atualiza a cache com os produtos atualizados
-            CacheService::updateProducts($products);
-
-            return response()->json(['success' => true, 'msg' => "Produto criado com sucesso."]);
-
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            return response()->json(['success' => false, 'msg' => "Erro ao criar produto: " . $e->getMessage()]);
-        }
+    } catch (\Throwable $e) {
+        Log::error('Erro ao criar produto.', ['error' => $e->getMessage()]);
+        return response()->json(['success' => false, 'msg' => "Campo nome e preço são obrigatórios."], 400);
     }
-
-
-    public function show(Request $request)
+}
+    /**
+     * Display the specified resource.
+     */
+    public function show(Request $request, string $id)
     {
         $product = $request->get('product');
         return response()->json(['success' => true, 'msg' => "Listado produto.", 'data' => $product]);
@@ -74,9 +62,13 @@ class ProductController extends Controller
     public function update(Request $request, int $id)
     {
         if(collect($request)->has('name', 'price')){
+            $products = CacheService::getProducts();
 
-            $product = $request->get('product');
-            $products = $request->get('products');
+            $product = $products->firstWhere('id', $id);
+
+            if($product == null){
+                return response()->json(['success' => false, 'msg' => "Produto não encontrado."], 404);
+            }
 
             $product->name = $request->name;
             $product->price = $request->price;

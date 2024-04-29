@@ -19,7 +19,6 @@ class ExistProduct
         $products = CacheService::getProducts();
 
         $product = $products->firstWhere('id', $request->route()->id);
-        
         if($product == null){
             return response()->json(['success' => false, 'msg' => "Produto não encontrado."], 404);
         }
