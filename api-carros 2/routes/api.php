@@ -86,5 +86,5 @@ use App\Http\Middleware\validateMiddlewere;
 
 Route::resource('/carros', CarroController::class);
 
-Route::resource('/carros', CarroController::class);
+
 
