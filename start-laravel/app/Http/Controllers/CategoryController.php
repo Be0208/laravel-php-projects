@@ -12,9 +12,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $products = Product::all();
+        $categories = Product::all();
 
-        return response()->json(['success' => true, 'msg' => "Litagem de categorias."]);
+        return response()->json(['success' => true, 'msg' => "Litagem de categorias.", 'data' => $categories]);
     }
 
     /**

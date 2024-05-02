@@ -9,7 +9,6 @@ class Category extends Model
 {
     protected $fillable = [ //esses sao os campos que vao poder ser malipulados na criação do PRODUTO
         'name',
-        'description',
         'enabled'
     ];
 }

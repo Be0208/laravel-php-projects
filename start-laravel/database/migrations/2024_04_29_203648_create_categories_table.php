@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id()->autoIncrement();
+            $table->string('name');
+            $table->boolean('enable')->default(true);
             $table->timestamps();
         });
     }
