@@ -14,8 +14,14 @@ class CarroController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        if($request->has('modelo')){
+            $carro = Car::where('modelo', $request->modelo)->get();
+
+            return response()->json(['carro' => $carro]);
+        }
+
         $carros = Car::all();
 
         return response()->json(['carros' => $carros]);
@@ -77,9 +83,15 @@ class CarroController extends Controller
 
             $carro = Car::findOrFail($id);
 
-            $carro->marca = $request->marca;
-            $carro->modelo = $request->modelo;
+            // $carro->marca = $request->marca;
+            // $carro->modelo = $request->modelo;
+                            //ou
 
+            $carro->fill([
+                'marca' => $request->marca,
+                'modelo' => $request->modelo
+            ]);
+            //save() para salvar a alteracao no banco de dados
             $carro->save();
 
             return response()->json(['success' => true, 'mgs' => "Carro editado!", 'data' => $carro]);
