@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Car;
 use App\Services\CacheService;
+use Dflydev\DotAccessData\Data;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -13,7 +16,7 @@ class CarroController extends Controller
      */
     public function index()
     {
-        $carros = CacheService::getCarros();
+        $carros = Car::all();
 
         return response()->json(['carros' => $carros]);
     }
@@ -26,67 +29,67 @@ class CarroController extends Controller
     public function store(Request $request)
     {
 
-        if (!$request->has(['id', 'modelo', 'marca'])) {
-            return response()->json(['error' => "Campos obrigatórios ausentes"]);
+        try {
+            $request->validate([
+                'marca' => 'required',
+                'modelo' => 'required'
+            ],
+            [
+                'marca.required' => 'Campo marca obrigatorio',
+                'modelo.required' => 'Campo modelo obrigatorio'
+            ]);
+
+            $car = Car::create($request->all());
+
+            return response()->json(['success' => true, 'msg' => "Carro criado com sucesso.", 'data' => $car]);
+        } catch (\Exception $error) {
+            return response()->json(['success' => false, 'msg' => $error->getMessage()], 404);
         }
-
-        $carros = CacheService::getCarros();
-
-        $carro = $request->json()->all();
-
-        $carros->push($carro);
-
-        CacheService::updateCarros($carros);
-
-        return response()->json(['success' => true, 'mgs' => "Carro adicionado com sucesso!"]);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Request $request)
+    public function show(int $id)
     {
-        $carros = $request->get('carro');
-
-        return response()->json(['success' => true, 'msg' => "Listando carro.", 'data' => $carros]);
+        try{
+            $carro = Car::findOrFail($id);
+            return response()->json(['success' => true, 'msg' => "Listado carro.", 'data' => $carro ]);
+        }catch(ModelNotFoundException $error){
+            return response()->json(['success' => false, 'msg' => $error->getMessage()], 404);
+        }
     }
-
-
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, int $id)
     {
-        if (!collect($request)->has('modelo', 'marca')) {
-            return response()->json(['success' => false, 'msg' => "Campos não informados!"]);
+        try {
+            $request->validate([
+                'marca' => 'required',
+                'modelo' => 'required'
+            ],
+            [
+                'marca.required' => 'Campo marca obrigatorio',
+                'modelo.required' => 'Campo modelo obrigatorio'
+            ]);
+
+            $carro = Car::findOrFail($id);
+
+            $carro->marca = $request->marca;
+            $carro->modelo = $request->modelo;
+
+            $carro->save();
+
+            return response()->json(['success' => true, 'mgs' => "Carro editado!", 'data' => $carro]);
+
+        } catch (ModelNotFoundException $error) {
+            return response()->json(['success' => false, 'msg' => $error->getMessage()], 400);
         }
-
-        $carros = CacheService::getCarros();
-
-        $carro = $carros->firstWhere('id', $id);
-
-
-        if ($carro == null) {
-            return response()->json(['success' => false, 'msg' => "carro não encontrado."], 404);
-        }
-
-
-        $carrosEditado = $carros->map(function ($item) use ($request, $id) {
-
-            if ($item->id == $id) {
-                $item->modelo = $request->modelo;
-                $item->marca = $request->marca;
-            }
-
-            return $item;
-        });
-
-        CacheService::updateCarros($carrosEditado);
-
-
-        return response()->json(['success' => true, 'mgs' => "Carro editado!"]);
     }
+
+
 
     /**
      * Remove the specified resource from storage.
@@ -94,16 +97,13 @@ class CarroController extends Controller
     public function destroy(int $id)
     {
 
-        $carros = CacheService::getCarros();
+        try{
+            $carro = Car::findOrFail($id);
+            $carro->delete();
 
-
-        $carrosNovo = $carros->reject(function ($carro) use ($id) {
-            return $carro->id == $id;
-        });
-
-        CacheService::updateCarros($carrosNovo);
-
-
-        return response()->json(['success' => true, 'mgs' => "Carro excluido!"]);
+            return response()->json(['success' => true, 'mgs' => "Carro excluido!", 'data' => $carro]);
+        }catch(ModelNotFoundException $error){
+            return response()->json(['success' => false, 'msg' => $error->getMessage()], 404);
+        }
     }
 }

@@ -84,7 +84,7 @@ use App\Http\Middleware\validateMiddlewere;
 
 // });
 
-Route::resource('/carros', CarroController::class)->except(['show']);
+Route::resource('/carros', CarroController::class);
 
-Route::get('/carros/{id}', [CarroController::class, 'show'])->middleware(validateMiddlewere::class);
+Route::resource('/carros', CarroController::class);
 
