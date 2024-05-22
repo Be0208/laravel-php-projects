@@ -15,14 +15,24 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {// pegar os dados da minha tabela do banco de dados
 
-        //sem consição:
-        $products = Product::all();
+        $params = collect($request->query());
+        $querySql = Product::query();
 
-        //com condição:
-        // $products = Product::where('enable', 1)->get();
+        if($params->get('price') !== null) {
+            $price = intval($params->get('price'));
+            $querySql->where('price', $price);
+        }
+
+        if($params->get('name') !== null) {
+            $querySql->findByName($params->get('name'));
+        }
+
+        //sem consição:
+        $products = $querySql->get();
+
 
         return response()->json(['success' => true, 'msg' => "Listagem de produtos.", 'data' => $products]);
     }

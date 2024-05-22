@@ -13,4 +13,9 @@ class Product extends Model
         'description',
         'enabled'
     ];
+
+    public function scopeFindByName($query, $search){
+        return $query->where(['name', 'LIKE', '%'. $search . '%']);
+
+    }
 }

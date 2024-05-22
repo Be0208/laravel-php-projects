@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id()->autoIncrement();
-            $table->string('name');
+            $table->string('name')->nullable(false);
+            $table->text('description')->nullable(true);
             $table->boolean('enable')->default(true);
             $table->timestamps();
         });
