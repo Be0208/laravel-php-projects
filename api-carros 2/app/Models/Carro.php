@@ -9,8 +9,13 @@ class Carro extends Model
 {
     protected $fillable = [
         'marca',
-        'modelo'
+        'modelo',
+        'status'
     ];
+
+    public function scopeStatus($query, $status){
+        return $query->where('status', $status);
+    }
 
 
 }

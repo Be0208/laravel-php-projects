@@ -15,16 +15,14 @@ class CarroController extends Controller
      */
     public function index(Request $request)
     {
-        if($request->has('modelo')){
+        $status = $request->query('status');
+        $query = Carro::query();
 
-            $carro = Carro::where('modelo', $request->modelo)->get();
-            return response()->json(['carro' => $carro]);
+        if($status === '1' || $status === '0'){
+            $query->status($status);
+        }
 
-           }
-           $carros = Carro::all();
-
-           return response()->json(['carros' => $carros]);
-
+        return response()->json(['carros' => $query->get()]);
     }
 
 
