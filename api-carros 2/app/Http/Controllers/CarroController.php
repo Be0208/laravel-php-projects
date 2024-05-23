@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Car;
-use App\Services\CacheService;
-use Dflydev\DotAccessData\Data;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Models\Carro;
 use Illuminate\Http\Request;
+use App\Services\CacheService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Cache;
 
 class CarroController extends Controller
@@ -17,14 +16,15 @@ class CarroController extends Controller
     public function index(Request $request)
     {
         if($request->has('modelo')){
-            $carro = Car::where('modelo', $request->modelo)->get();
 
+            $carro = Carro::where('modelo', $request->modelo)->get();
             return response()->json(['carro' => $carro]);
-        }
 
-        $carros = Car::all();
+           }
+           $carros = Carro::all();
 
-        return response()->json(['carros' => $carros]);
+           return response()->json(['carros' => $carros]);
+
     }
 
 
@@ -34,23 +34,25 @@ class CarroController extends Controller
      */
     public function store(Request $request)
     {
+          try{
 
-        try {
-            $request->validate([
+             $request->validate([
                 'marca' => 'required',
                 'modelo' => 'required'
             ],
             [
-                'marca.required' => 'Campo marca obrigatorio',
-                'modelo.required' => 'Campo modelo obrigatorio'
+                'marca.required' => 'Campo marca é obrigatório!',
+                'modelo.required' => 'Campo modelo é obrigatório!'
+
             ]);
 
-            $car = Car::create($request->all());
+            $carro = Carro::create($request->all());
 
-            return response()->json(['success' => true, 'msg' => "Carro criado com sucesso.", 'data' => $car]);
-        } catch (\Exception $error) {
-            return response()->json(['success' => false, 'msg' => $error->getMessage()], 404);
-        }
+            return response()->json(['success' => true, 'msg' => "Carro criado com sucesso.", "data" => $carro]);
+
+          }catch(\Exception $error){
+            return response()->json(['success' => false, 'msg' => $error->getMessage()], 400);
+          }
     }
 
     /**
@@ -59,11 +61,15 @@ class CarroController extends Controller
     public function show(int $id)
     {
         try{
-            $carro = Car::findOrFail($id);
+            $carro = Carro::findOrFail($id);
+
             return response()->json(['success' => true, 'msg' => "Listado carro.", 'data' => $carro ]);
+
         }catch(ModelNotFoundException $error){
             return response()->json(['success' => false, 'msg' => $error->getMessage()], 404);
+
         }
+
     }
 
     /**
@@ -71,51 +77,51 @@ class CarroController extends Controller
      */
     public function update(Request $request, int $id)
     {
-        try {
+        try{
             $request->validate([
                 'marca' => 'required',
                 'modelo' => 'required'
             ],
             [
-                'marca.required' => 'Campo marca obrigatorio',
-                'modelo.required' => 'Campo modelo obrigatorio'
+                'marca.required' => 'Campo marca é obrigatório!',
+                'modelo.required' => 'Campo modelo é obrigatório!'
+
             ]);
 
-            $carro = Car::findOrFail($id);
+            $carro = Carro::findOrFail($id);
 
-            // $carro->marca = $request->marca;
+             // $carro->marca = $request->marca;
             // $carro->modelo = $request->modelo;
-                            //ou
 
             $carro->fill([
                 'marca' => $request->marca,
                 'modelo' => $request->modelo
             ]);
-            //save() para salvar a alteracao no banco de dados
+
             $carro->save();
 
             return response()->json(['success' => true, 'mgs' => "Carro editado!", 'data' => $carro]);
 
-        } catch (ModelNotFoundException $error) {
+        }catch(\Exception $error){
             return response()->json(['success' => false, 'msg' => $error->getMessage()], 400);
-        }
+         }
     }
-
-
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(int $id)
     {
-
         try{
-            $carro = Car::findOrFail($id);
+            $carro = Carro::findOrFail($id);
+
             $carro->delete();
 
-            return response()->json(['success' => true, 'mgs' => "Carro excluido!", 'data' => $carro]);
-        }catch(ModelNotFoundException $error){
-            return response()->json(['success' => false, 'msg' => $error->getMessage()], 404);
-        }
+            return response()->json(['success' => true, 'mgs' => "Carro excluido!"]);
+
+        }catch(\Exception $error){
+            return response()->json(['success' => false, 'msg' => $error->getMessage()], 400);
+         }
+
     }
 }

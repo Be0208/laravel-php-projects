@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Http\Middleware\ExistCarro;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CarroController;
-use App\Http\Middleware\validateMiddlewere;
 
 /*
 |--------------------------------------------------------------------------
@@ -85,6 +85,4 @@ use App\Http\Middleware\validateMiddlewere;
 // });
 
 Route::resource('/carros', CarroController::class);
-
-
-
+// Route::get('/carros/{id}', [CarroController::class, 'show'])->middleware(ExistCarro::class);
