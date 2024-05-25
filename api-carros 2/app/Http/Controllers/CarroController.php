@@ -88,9 +88,6 @@ class CarroController extends Controller
 
             $carro = Carro::findOrFail($id);
 
-             // $carro->marca = $request->marca;
-            // $carro->modelo = $request->modelo;
-
             $carro->fill([
                 'marca' => $request->marca,
                 'modelo' => $request->modelo
