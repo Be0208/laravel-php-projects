@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\ProductController;
@@ -21,26 +22,28 @@ use Illuminate\Support\Facades\Cache;
 |
 */
 
+
+// Route::get('/users/marcelo/cache', function(Request $request){
+    //     $user = json_decode(Cache::get('user'));
+
+    //     dd($user->name);
+    // });
+
+    
 Route::get('/', function (Request $request){
     return response()->json(['success' => true, 'msg' => "Hello world!"]);
 });
 
-// Route::post('/users', [UserController::class, 'create']);
+Route::resource('/auth', AuthController::class);
 
-Route::get('/users/{id}', function(Request $request, $id){
+Route::middleware('auth:sanctum')->group(function (){ //precisa de autenticação do token para ser acessada
+    Route::resource('/users', UserController::class);
 
-    return response()->json(['success' => true, 'msg' => "Você mandou o user {$id}!"]);
+    Route::resource('/products', ProductController::class);
+
+    Route::resource('/categories', CategoryController::class);
+
+    Route::resource('/people', PersonController::class)->middleware('auth:sanctum');
+
+    Route::get('/people/{id}/received', [PersonController::class, 'update']);
 });
-
-Route::get('/users/marcelo/cache', function(Request $request){
-    $user = json_decode(Cache::get('user'));
-
-    dd($user->name);
-});
-
-Route::resource('/products', ProductController::class);
-
-Route::resource('/categories', CategoryController::class);
-
-Route::resource('/people', PersonController::class);
-Route::get('/people/{id}/received', [PersonController::class, 'update']);

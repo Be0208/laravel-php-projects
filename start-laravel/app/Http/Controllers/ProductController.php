@@ -30,7 +30,7 @@ class ProductController extends Controller
         }
 
         //SEM CONDICAO
-        dd($querySql->toSql());
+        // dd($querySql->toSql());
         $products = $querySql->get();
 
         return response()->json(['success' => true, 'msg' => "Listagem de produtos.", 'data' => $products]);

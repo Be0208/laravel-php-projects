@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
-class UserController extends Controller
+class AuthController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -23,22 +24,27 @@ class UserController extends Controller
     {
         try {
             $request->validate([
-                'name' => 'required',
                 'email' => 'required',
                 'password' => 'required'
             ]);
 
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => bcrypt($request->password) //criptografia dos dados
-            ]);
+            $user = User::where('email', $request->email)->first();
 
-            return response()->json(['success' => true, 'msg' => "Sucesso ao criar Usuario", 'data' => $user], 200);
+            if (!$user || !Hash::check($request->password, $user->password)) {
+                return response()->json(['success' => false, 'msg' => 'Verificar email ou senha.'], 401);
+            }
+            //pegando a hash e comparando com a senha que foi enviado ^
+
+            $token = $user->createToken ($user->email, ['*'], now()->addMinute())->plainTextToken;
+
+            return response()->json(['success' => true, 'msg' => "Login efetuado com sucesso", 'data' => [
+                'user' => $user,
+                'token' => $token
+            ]], 200);
 
         } catch (\Throwable $th) {
-            Log::error('Erro ao criar Usuario', ['error' => $th->getMessage()]);
-            return response()->json(['success' => false, 'msg' => "Erro ao criar Usuario"], 400);
+            Log::error('Erro ao fazer login', ['error' => $th->getMessage()]);
+            return response()->json(['success' => false, 'msg' => "Erro ao logar"], 400);
         }
     }
 
