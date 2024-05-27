@@ -2,20 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    protected $fillable = [ //esses sao os campos que vao poder ser malipulados na criação do PRODUTO
+    protected $fillable = [
         'name',
         'price',
         'description',
-        'enabled'
+        'enable'
     ];
 
-    public function scopeFindByName($query, $search){
-        return $query->where(['name', 'LIKE', '%'. $search . '%']);
+    public function scopeFindByName($query, $search) {
+        return $query->where('name', 'LIKE', '%'. $search .'%');
     }
-
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PersonController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\ExistProduct;
@@ -40,3 +41,6 @@ Route::get('/users/marcelo/cache', function(Request $request){
 Route::resource('/products', ProductController::class);
 
 Route::resource('/categories', CategoryController::class);
+
+Route::resource('/people', PersonController::class);
+Route::get('/people/{id}/received', [PersonController::class, 'update']);

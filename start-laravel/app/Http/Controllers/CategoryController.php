@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\Product;
-use GuzzleHttp\Psr7\Query;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -19,7 +17,7 @@ class CategoryController extends Controller
         $query = Category::query();
 
         if($params->get('enable') === "0"){
-            $query->NotEnable();
+            $query->notEnable();
         }
 
         if($params->get('enable') === null || $params->get('enable') === "1"){
@@ -27,8 +25,7 @@ class CategoryController extends Controller
         }
 
         if($params->get('name') !== null){
-            $query->FindByName( $params->get('name'));
-            // $query->where('name', 'LIKE', '%'. $params->get('name'). '%');
+            $query->findByName($params->get('name'));
         }
 
         if($params->get('all') === "1"){
@@ -65,15 +62,7 @@ class CategoryController extends Controller
      */
     public function show(string $id)
     {
-        return response()->json(['success' => true, 'msg' => "Lita a categoria, $id."]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        return response()->json(['success' => true, 'msg' => "Edit a categoria, $id."]);
+        //
     }
 
     /**
@@ -81,7 +70,7 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        return response()->json(['success' => true, 'msg' => "Update a categoria, $id."]);
+        //
     }
 
     /**
@@ -89,6 +78,6 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        return response()->json(['success' => true, 'msg' => "Delete a categoria, $id."]);
+        //
     }
 }
