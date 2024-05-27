@@ -25,7 +25,7 @@ Route::get('/', function (Request $request){
     return response()->json(['success' => true, 'msg' => "Hello world!"]);
 });
 
-Route::post('/users', [UserController::class, 'create']);
+// Route::post('/users', [UserController::class, 'create']);
 
 Route::get('/users/{id}', function(Request $request, $id){
 
