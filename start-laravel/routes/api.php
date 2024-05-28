@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Cache;
     //     dd($user->name);
     // });
 
-    
+
 Route::get('/', function (Request $request){
     return response()->json(['success' => true, 'msg' => "Hello world!"]);
 });
@@ -43,7 +43,7 @@ Route::middleware('auth:sanctum')->group(function (){ //precisa de autenticaçã
 
     Route::resource('/categories', CategoryController::class);
 
-    Route::resource('/people', PersonController::class)->middleware('auth:sanctum');
+    Route::resource('/people', PersonController::class);
 
     Route::get('/people/{id}/received', [PersonController::class, 'update']);
 });
