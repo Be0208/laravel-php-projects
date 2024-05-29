@@ -35,10 +35,9 @@ Route::get('/', function (Request $request){
 });
 
 Route::resource('/auth', AuthController::class);
+Route::resource('/users', UserController::class);
 
 Route::middleware('auth:sanctum')->group(function (){ //precisa de autenticação do token para ser acessada
-    Route::resource('/users', UserController::class);
-
     Route::resource('/products', ProductController::class);
 
     Route::resource('/categories', CategoryController::class);
