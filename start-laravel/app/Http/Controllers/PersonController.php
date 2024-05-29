@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Person;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class PersonController extends Controller
 {
@@ -18,6 +20,8 @@ class PersonController extends Controller
         if($params->get('received') === "1") {
             $query->received(1);
         }
+
+        Log::info(Auth::user());
 
         if($params->get('received') === "0") {
             $query->received(0);

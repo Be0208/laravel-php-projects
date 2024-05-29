@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -13,7 +13,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        $user = User::all();
+
+        return response()->json(['success' => 'true', 'msg' => 'Usuários mostrados com sucesso', 'data' => $user]);
     }
 
     /**
@@ -25,20 +27,23 @@ class UserController extends Controller
             $request->validate([
                 'name' => 'required',
                 'email' => 'required',
-                'password' => 'required'
+                'password' => 'required',
+            ],
+            [
+                'required' => 'O campo :attribute é obrigatório!'
             ]);
 
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => bcrypt($request->password) //criptografia dos dados
-            ]);
+            $user = new User();
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->password = Hash::make($request->password);
+            $user->save();
 
-            return response()->json(['success' => true, 'msg' => "Sucesso ao criar Usuario", 'data' => $user], 200);
+            return response()->json(['success' => 'true', 'msg' => 'Usuários cadastrados com sucesso', 'data' => $user]);
+
 
         } catch (\Throwable $th) {
-            Log::error('Erro ao criar Usuario', ['error' => $th->getMessage()]);
-            return response()->json(['success' => false, 'msg' => "Erro ao criar Usuario"], 400);
+            return response()->json(['success' => 'false', 'msg' => $th->getMessage()]);
         }
     }
 
@@ -47,7 +52,14 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+
+            return response()->json(['success' => 'true', 'msg' => 'Usuário encontrado com sucesso', 'data' => User::findOrFail($id)]);
+
+        } catch (\Throwable $th) {
+
+            return response()->json(['success' => 'false', 'msg' => $th->getMessage()]);
+        }
     }
 
     /**
@@ -55,7 +67,27 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+
+            $user = User::findOrFail($id);
+
+            if($request->has('name')){
+                $user->name = $request->name;
+            }
+            if($request->has('email')){
+                $user->email = $request->email;
+            }
+            if($request->has('password')){
+                $user->password = Hash::make($request->password);
+            }
+
+            $user->save();
+
+            return response()->json(['success' => 'true', 'msg' => 'Usuário alterado com sucesso', 'data' => $user]);
+
+        } catch (\Throwable $th) {
+            return response()->json(['success' => 'false', 'msg' => $th->getMessage()]);
+        }
     }
 
     /**
@@ -63,6 +95,15 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $user = User::findOrFail($id);
+            $user->delete();
+
+            return response()->json(['success' => 'true', 'msg' => 'Usuário deletado com sucesso', 'data' => $user]);
+
+        } catch (\Throwable $th) {
+            return response()->json(['success' => 'false', 'msg' => $th->getMessage()]);
+        }
+
     }
 }
