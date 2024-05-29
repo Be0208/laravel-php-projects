@@ -1,6 +1,10 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,10 +18,12 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-// Route::resource('/User', UserController::class);
+Route::resource('/users', UserController::class);
+
 Route::resource('/login', AuthController::class);
 
 Route::middleware('auth:sanctum')->group(function (){
-    // Route::resource('/post', PostController::class);
-
+    Route::resource('/posts', PostController::class);
+    Route::apiResource('/likes', LikeController::class);
+    Route::get('/reports/user', [ReportController::class, 'user']);
 });

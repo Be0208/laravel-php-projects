@@ -1,15 +1,12 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\PersonController;
-use App\Http\Controllers\ProductController;
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
-use App\Http\Middleware\ExistProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Cache;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -22,27 +19,12 @@ use Illuminate\Support\Facades\Cache;
 |
 */
 
-
-// Route::get('/users/marcelo/cache', function(Request $request){
-    //     $user = json_decode(Cache::get('user'));
-
-    //     dd($user->name);
-    // });
-
-
-Route::get('/', function (Request $request){
-    return response()->json(['success' => true, 'msg' => "Hello world!"]);
-});
-
-Route::resource('/auth', AuthController::class);
 Route::resource('/users', UserController::class);
 
-Route::middleware('auth:sanctum')->group(function (){ //precisa de autenticação do token para ser acessada
-    Route::resource('/products', ProductController::class);
+Route::resource('/login', AuthController::class);
 
-    Route::resource('/categories', CategoryController::class);
-
-    Route::resource('/people', PersonController::class);
-
-    Route::get('/people/{id}/received', [PersonController::class, 'update']);
+Route::middleware('auth:sanctum')->group(function (){
+    Route::resource('/posts', PostController::class);
+    Route::apiResource('/likes', LikeController::class);
+    Route::get('/reports/user', [ReportController::class, 'user']);
 });
