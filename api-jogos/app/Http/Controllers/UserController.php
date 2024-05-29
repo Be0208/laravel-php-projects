@@ -30,11 +30,7 @@ class UserController extends Controller
                 'required' => 'O :attribute é obrigatório!' //mostra quais os dados que estao incorretos
             ]);
 
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => bcrypt($request->password) //criptografia dos dados pega todas as informações que foi mandada no requisição e monta um usuario com esses dados
-            ]);
+            $user = User::create($request->all());
 
             return response()->json(['success' => true, 'msg' => 'Usuario cadastrado', 'data' => $user]);
 
