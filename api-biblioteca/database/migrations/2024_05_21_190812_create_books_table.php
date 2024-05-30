@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('livros', function (Blueprint $table) {
-            $table->id()->autoIncrement();
-            $table->string('Nome', 100);
-            $table->string('Autor', 100);
-            $table->string('paginas', 100);
+        Schema::create('books', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->string('description')->nullable(true);
+            $table->string('author');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('livros');
+        Schema::dropIfExists('books');
     }
 };
