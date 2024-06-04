@@ -8,19 +8,14 @@ use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+   
     public function index(Request $request)
     {
         $posts = Post::all();
         return response()->json(['success' => true, 'data' => $posts]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+       public function store(Request $request)
     {
         try {
 
@@ -44,10 +39,7 @@ class PostController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+       public function show(string $id)
     {
         {
             try {
@@ -61,9 +53,6 @@ class PostController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         try {
@@ -84,10 +73,7 @@ class PostController extends Controller
             return response()->json(['success' => false, 'msg' => $th->getMessage], 400);
         }
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
+  
     public function destroy(string $id)
     {
         try {
