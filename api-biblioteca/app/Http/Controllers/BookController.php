@@ -26,7 +26,7 @@ class BookController extends Controller
 
         // $author = Book::pluck('author');
 
-        return response()->json(['success' => true, 'msg' => "Livro criado com sucesso!", "data" => $bookInfo], 200);;
+        return response()->json(['success' => true, 'msg' => "Lista de livros:", "data" => $bookInfo], 200);;
     }
 
     /**
@@ -93,8 +93,17 @@ class BookController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Book $book)
+    public function destroy(string $id)
     {
-        //
+        try {
+            $book = Book::findOrFail($id);
+            $book->delete();
+
+            return response()->json(['success' => 'true', 'msg' => 'Usuário deletado com sucesso', 'data' => $book]);
+
+        } catch (\Throwable $th) {
+            return response()->json(['success' => 'false', 'msg' => $th->getMessage()]);
+        }
+
     }
 }
