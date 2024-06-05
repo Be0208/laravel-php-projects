@@ -16,4 +16,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('/posts', PostController::class);
     Route::apiResource('/likes', LikeController::class);
     Route::get('/reports', [ReportController::class, 'index']);
+    Route::get('/reports/userslike', [ReportController::class, 'userMostLikes']);
 });

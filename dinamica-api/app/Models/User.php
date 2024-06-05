@@ -54,4 +54,14 @@ class User extends Authenticatable
             ->get()
             ->toArray();
     }
+
+    public static function getLikesAmount()
+    {
+        return Like::select('users.name', DB::raw('count(userId) as totalLikes'))
+            ->join('users', 'users.id', '=', 'likes.userId')
+            ->groupBy('users.name')
+            ->orderBy('totalLikes', 'desc')
+            ->limit(1)
+            ->get();
+    }
 }

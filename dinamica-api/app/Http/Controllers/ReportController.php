@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Like;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -63,5 +64,16 @@ class ReportController extends Controller
         return response()->json([
             'report_users' => [...$orderData]
         ]);
+    }
+
+    public function userMostLikes(){
+
+        $likes = User::getLikesAmount();
+
+        return response()->json(
+            [
+                'getLikesAmount' => $likes
+            ]
+        );
     }
 }
