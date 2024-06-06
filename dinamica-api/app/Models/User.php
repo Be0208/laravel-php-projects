@@ -64,4 +64,15 @@ class User extends Authenticatable
             ->limit(1)
             ->get();
     }
+
+    public function posts(){
+        return $this->hasMany(Post::class, 'userId');
+    }
+
+    public function profile(){
+        return $this->hasOne(Profile::class);// hasOne = "possui um"
+    }
+    public function likes(){
+        return $this->hasMany(Like::class, 'userId');
+    }
 }

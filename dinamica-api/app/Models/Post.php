@@ -23,4 +23,13 @@ class Post extends Model
             ->get()
             ->toArray();
     }
+
+    public function user(){
+        return $this->belongsTo(User::class, 'userId');
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class, 'postId');
+    }
 }

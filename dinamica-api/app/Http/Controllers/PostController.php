@@ -8,10 +8,11 @@ use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
-   
+
     public function index(Request $request)
     {
-        $posts = Post::all();
+        $posts = Post::with('likes')->with('likes.user.')->get();
+
         return response()->json(['success' => true, 'data' => $posts]);
     }
 
@@ -73,7 +74,7 @@ class PostController extends Controller
             return response()->json(['success' => false, 'msg' => $th->getMessage], 400);
         }
     }
-  
+
     public function destroy(string $id)
     {
         try {
