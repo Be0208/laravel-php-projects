@@ -2,7 +2,8 @@
 
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
-use App\Models\Author;
+use App\Http\Controllers\BorrowingController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,5 +18,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::resource('/authors', AuthorController::class);
-Route::resource('/books', BookController::class);
+Route::apiResource('authors', AuthorController::class);
+Route::apiResource('books', BookController::class);
+Route::apiResource('users', UserController::class);
+Route::apiResource('borrowings', BorrowingController::class);

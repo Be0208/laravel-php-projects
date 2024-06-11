@@ -11,8 +11,8 @@ class Author extends Model
         'name'
     ];
 
-    //metodo para buscar os livros do author
     public function books(){
         return $this->hasMany(Book::class);
     }
+
 }

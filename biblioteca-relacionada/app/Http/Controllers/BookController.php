@@ -7,64 +7,71 @@ use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $authors = Book::with('author.name')->get();
-
-
-        return response()->json(['success' => true, 'data' => $authors]);
+        return response()->json(Book::with('author')->get());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         try {
             $request->validate([
                 'title' => 'required',
                 'description' => 'required',
-                'author_id' => 'required'
-            ],
-            [
-                'required' => 'O campo :atribute é obrigatorio'
+                'author_id' => 'required',
+            ], [
+                'required' => 'O campo :atribute é obrigatório!'
             ]);
 
-            $books = Book::create($request->all());
-
-            return response()->json(['success' => true, 'msg' => 'Book criado com sucesso', 'author' => $books]);
-
-
-        } catch (\Throwable $th) {
-            return response()->json(['success' => false, 'msg' => $th->getMessage()], 401);
-            //throw $th;
+            $book = Book::create($request->all());
+            return response()->json(['success' => true, 'msg' => "Livro criado com sucesso!", "data" => $book], 200);
+            
+        } catch (\Exception $error) {
+            return response()->json(['success' => false, 'msg' => $error->getMessage()], 400);
         }
+
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Book $book)
+    public function show($id)
     {
-        //
+        try {
+            $book = Book::findOrfail($id);
+            return response()->json(['success' => true, 'msg' => "livro listado!", "data" => $book], 200);
+        } catch (\Exception $error) {
+            return response()->json(['success' => false, 'msg' => $error->getMessage()], 400);
+        };
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Book $book)
+    public function update(Request $request, $id)
     {
-        //
+        try {
+            $request->validate([
+                'title' => 'required',
+                'description' => 'required',
+                'author_id' => 'required',
+            ], [
+                'required' => 'O campo :atribute é obrigatório!'
+            ]);
+
+            $book = Book::findOrfail($id);
+
+            $book->fill([
+                'name' => $request->name,
+                'description' => $request->description,
+                'author_id' => $request->author_id
+            ]);
+
+            $book->save();
+            return response()->json(['success' => true, 'msg' => "livro atualizado!", "data" => $book], 200);
+        } catch (\Exception $error) {
+            return response()->json(['success' => false, 'msg' => $error->getMessage()], 400);
+        };
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Book $book)
+    public function destroy($id)
     {
-        //
+        $book = Book::findOrFail($id);
+        $book->delete();
+        return response()->json(null, 204);
     }
 }

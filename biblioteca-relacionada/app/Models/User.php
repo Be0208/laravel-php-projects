@@ -40,5 +40,10 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'password' => 'hashed',
     ];
+
+    public function books(){
+        return $this->belongsToMany(Book::class, 'book_user')->withPivot('borrowed_at', 'due_date');
+    }
 }

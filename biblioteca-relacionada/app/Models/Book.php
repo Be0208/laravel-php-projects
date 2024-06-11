@@ -13,8 +13,12 @@ class Book extends Model
         'author_id'
     ];
 
-    //metodo para o livro pertencer a UM autor
     public function author(){
         return $this->belongsTo(Author::class);
     }
+
+    public function users(){
+        return $this->belongsToMany(User::class, 'book_user')->withPivot('borrowed_at', 'due_date');
+    }
+
 }
