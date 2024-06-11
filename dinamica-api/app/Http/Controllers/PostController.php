@@ -11,7 +11,7 @@ class PostController extends Controller
 
     public function index(Request $request)
     {
-        $posts = Post::with('likes')->with('likes.user.')->get();
+        $posts = Post::with('likes')->with('likes.user')->get();
 
         return response()->json(['success' => true, 'data' => $posts]);
     }
@@ -33,6 +33,10 @@ class PostController extends Controller
                 "userId" => $user->id,
                 "content" => $request->content
             ]);
+
+            if($request->tags){
+                $post->tags()->attach($request->tags);
+            }
 
             return response()->json(['success' => true, 'msg' => 'Post cadastrado com sucesso!', 'data' => $post]);
         } catch (\Throwable $th) {
@@ -66,6 +70,12 @@ class PostController extends Controller
             [
                 'required' => 'Faltou :attribute'
             ]);
+
+            if($request->tags){
+                $post->tags()->sync($request->tags);
+            } else {
+                $post->tags()->detach();
+            }
 
             $post->content = $request->content;
             $post->save();

@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,4 +18,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/likes', LikeController::class);
     Route::get('/reports', [ReportController::class, 'index']);
     Route::get('/reports/userslike', [ReportController::class, 'userMostLikes']);
+    Route::apiResource('/tag', TagController::class);
 });
