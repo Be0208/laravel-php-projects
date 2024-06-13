@@ -8,9 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class LikeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+   
     public function index()
     {
         $query = Like::query();
@@ -18,9 +16,7 @@ class LikeController extends Controller
         return response()->json(['success'=> true, 'data' => $query->get()]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+   
     public function store(Request $request)
     {
         try {
@@ -47,9 +43,7 @@ class LikeController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
+
     public function show(int $id)
     {
         try {
@@ -60,17 +54,13 @@ class LikeController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+  
     public function update(Request $request, Like $like)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+  
     public function destroy(int $id)
     {
         try {

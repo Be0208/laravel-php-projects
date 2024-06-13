@@ -6,11 +6,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable; //define a implemnetação de tokens do SANKTON
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -28,8 +29,6 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-
-     //prtege e n deixa eles aparecerem
     protected $hidden = [
         'password',
         'remember_token',
@@ -40,10 +39,32 @@ class User extends Authenticatable
      *
      * @var array<string, string>
      */
-
-     // define o tipo
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public static function getPostsAmount($userOrder, $userLimit): array
+    {
+        return Post::select('users.name', DB::raw('count(userId) as totalPosts'))
+            ->join('users', 'users.id', '=', 'posts.userId')
+            ->groupBy('users.name')
+            ->orderBy('totalPosts', $userOrder === 'asc' ? 'asc' : 'desc')
+            ->limit($userLimit === 0 ? 10 : $userLimit)
+            ->get()
+            ->toArray();
+    }
+
+    public function posts() {
+        return $this->hasMany(Post::class, 'userId');
+    }
+
+    public function profile() {
+        return $this->hasOne(Profile::class);
+    }
+
+    public function likes() {
+        return $this->hasMany(Like::class, 'userId');
+    }
+
 }

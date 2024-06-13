@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Book;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,8 @@ class BorrowingController extends Controller
      */
     public function index()
     {
-        //
+        $data = User::with('books')->get();
+        return response()->json(['success' => true, 'msg' => 'Tags listadas com sucesso.', 'data' => $data]);
     }
 
     /**
@@ -22,13 +24,13 @@ class BorrowingController extends Controller
     {
         try {
             $request->validate([
-                'user_id' => 'required|exist:users,id',
-                'book_id' => 'required|exist:books,id',
+                'user_id' => 'required|exists:users,id',
+                'book_id' => 'required|exists:books,id',
                 'due_date' => 'required|date'
             ]);
 
             $user = User::find($request->user_id);
- 
+
             // criando registros a tabela pivô
             $user->books()->attach($request->book_id, [
                 'borrowed_at' => now(),
@@ -47,7 +49,14 @@ class BorrowingController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+
+            $post = ;
+
+            return response()->json(['success' => true, 'data' => $post]);
+        } catch (\Throwable $th) {
+            return response()->json(['success' => false, 'msg' => $th->getMessage], 400);
+        }
     }
 
     /**

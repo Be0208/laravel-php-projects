@@ -47,14 +47,7 @@ class PostController extends Controller
        public function show(string $id)
     {
         {
-            try {
-
-                $post = Post::findOrFail($id);
-
-                return response()->json(['success' => true, 'data' => $post]);
-            } catch (\Throwable $th) {
-                return response()->json(['success' => false, 'msg' => $th->getMessage], 400);
-            }
+            £
         }
     }
 

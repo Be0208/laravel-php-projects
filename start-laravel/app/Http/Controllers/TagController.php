@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class TagController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $borrowing = User::all();
+        $tags = Tag::all();
 
-        return response()->json(['success' => true, 'data' => $borrowing]);
-
+        return response()->json(['success' => true, 'msg' => 'Tags listadas com sucesso.', 'data' => $tags]);
     }
 
     /**
@@ -24,21 +23,17 @@ class UserController extends Controller
     public function store(Request $request)
     {
         try {
-            $request -> validate([
-                'name' => 'required',
-                'email' => 'required',
-                'password' => 'required'
+            $request->validate([
+                'name' => 'required'
             ]);
 
-            $user = User::create($request->all());
+            $tag = Tag::create([
+                'name' => $request->name
+            ]);
 
-            return response()->json(['success' => true, 'msg' => 'Usuário cadastrado com sucesso!', 'data' => $user], 201);
-
-
+            return response()->json(['success' => true, 'msg' => 'Tag criada com sucesso.', 'data' => $tag]);
         } catch (\Throwable $th) {
-
             return response()->json(['success' => false, 'msg' => $th->getMessage()], 400);
-
         }
     }
 

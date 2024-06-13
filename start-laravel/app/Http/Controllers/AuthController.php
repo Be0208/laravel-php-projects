@@ -9,17 +9,12 @@ use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+   
     public function index()
     {
-        //
+       
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         try {
@@ -33,9 +28,8 @@ class AuthController extends Controller
             if (!$user || !Hash::check($request->password, $user->password)) {
                 return response()->json(['success' => false, 'msg' => 'Verificar email ou senha.'], 401);
             }
-            //pegando a hash e comparando com a senha que foi enviado ^
 
-            $token = $user->createToken ($user->email, ['*'], now()->addMinute())->plainTextToken;
+            $token = $user->createToken($user->email)->plainTextToken;
 
             return response()->json(['success' => true, 'msg' => "Login efetuado com sucesso", 'data' => [
                 'user' => $user,
@@ -48,27 +42,20 @@ class AuthController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
+  
     public function show(string $id)
     {
-        //
+        
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+  
     public function update(Request $request, string $id)
     {
-        //
+       
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+      
     }
 }
