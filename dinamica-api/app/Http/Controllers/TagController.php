@@ -13,8 +13,8 @@ class TagController extends Controller
     public function index()
     {
         $tags = Tag::all();
-        return response()->json(['success' => 'true', 'msg' => 'Tags listadas com sucesso', 'data' => $tags]);
 
+        return response()->json(['success' => true, 'msg' => 'Tags listadas com sucesso.', 'data' => $tags]);
     }
 
     /**
@@ -25,17 +25,15 @@ class TagController extends Controller
         try {
             $request->validate([
                 'name' => 'required'
-            ],
-            [
-                'required' => 'O campo :attribute é obrigatório!'
             ]);
+
             $tag = Tag::create([
                 'name' => $request->name
             ]);
 
-            return response()->json(['success' => 'true', 'msg' => 'Tag cadastrada com sucesso', 'data' => $tag]);
+            return response()->json(['success' => true, 'msg' => 'Tag criada com sucesso.', 'data' => $tag]);
         } catch (\Throwable $th) {
-            return response()->json(['success' => 'false', 'msg' => $th->getMessage()],400);
+            return response()->json(['success' => false, 'msg' => $th->getMessage()], 400);
         }
     }
 

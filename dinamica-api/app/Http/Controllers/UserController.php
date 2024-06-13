@@ -11,9 +11,10 @@ class UserController extends Controller
 
     public function index()
     {
-        $user = User::with('posts')->get();
+        $users = User::with('posts')->withCount('posts')->get();
 
-        return response()->json(['success' => 'true', 'msg' => 'Usuários mostrados com sucesso', 'data' => $user]);
+
+        return response()->json(['success' => 'true', 'msg' => 'Usuários mostrados com sucesso', 'data' => $users]);
     }
 
 
@@ -47,8 +48,10 @@ class UserController extends Controller
     public function show(string $id)
     {
         try {
-            $user= User::with('profile')->find($id);
-            return response()->json(['success' => 'true', 'msg' => 'Usuário encontrado com sucesso', 'data' => $user->load('profile')]);
+
+            $user = User::with('profile')->find($id);
+
+            return response()->json(['success' => 'true', 'msg' => 'Usuário encontrado com sucesso', 'data' => $user]);
 
         } catch (\Throwable $th) {
 

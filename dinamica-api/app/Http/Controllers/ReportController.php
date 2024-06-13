@@ -2,14 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Like;
 use App\Models\Post;
 use App\Models\User;
+use App\Services\ReportService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
+    public function reports(Request $request)
+    {
+        $report = $request->report;
+
+        switch ($report) {
+            case 'user':
+                $userId = $request->query('userId');
+                $posts = ReportService::postsByUser($userId);
+                return response()->json(['success' => true, 'msg'=>'Relatório retornado com sucesso.', 'data' => $posts]);
+                break;
+            case 'most-likes':
+                $limit = $request->query('limit');
+                $posts = ReportService::postsMostLikes($limit);
+                return response()->json(['success' => true, 'msg'=>'Relatório retornado com sucesso.', 'data' => $posts]);
+            case 'tag':
+                $tagId = $request->query('tagId');
+                $posts = ReportService::postsByTag($tagId);
+                return response()->json(['success' => true, 'msg'=>'Relatório retornado com sucesso.', 'data' => $posts]);
+            default:
+                return response()->json(['success' => false, 'msg'=>'Relatório não encontrado.'], 400);
+                break;
+        }
+
+    }
 
     public function index(Request $request)
     {
@@ -64,16 +88,5 @@ class ReportController extends Controller
         return response()->json([
             'report_users' => [...$orderData]
         ]);
-    }
-
-    public function userMostLikes(){
-
-        $likes = User::getLikesAmount();
-
-        return response()->json(
-            [
-                'getLikesAmount' => $likes
-            ]
-        );
     }
 }

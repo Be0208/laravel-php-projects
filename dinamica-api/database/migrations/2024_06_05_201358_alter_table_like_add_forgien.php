@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('posts', function(Blueprint $table){
+        Schema::table('likes', function (Blueprint $table) {
             $table->unsignedBigInteger('userId')->change();
         });
 
-        Schema::table('posts', function(Blueprint $table){
+        Schema::table('likes', function(Blueprint $table){
             $table->foreign('userId')->references('id')->on('users')->onDelete('cascade');
         });
     }
@@ -25,11 +25,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('posts', function (Blueprint $table){
+        Schema::table('likes', function (Blueprint $table) {
             $table->integer('userId')->change();
         });
-        Schema::table('posts', function (Blueprint $table) {
-         $table->dropForeign(['userId']);
+
+        Schema::table('likes', function(Blueprint $table){
+            $table->dropForeign(['userId']);
         });
     }
 };

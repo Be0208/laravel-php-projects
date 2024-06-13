@@ -11,7 +11,10 @@ class PostController extends Controller
 
     public function index(Request $request)
     {
-        $posts = Post::with('likes')->with('likes.user')->get();
+        $limit = $request->query('limit');
+        $page = $request->query('page');
+
+        $posts = Post::with('likes')->with('likes.user')->paginate($limit, ['*'], 'page', $page);
 
         return response()->json(['success' => true, 'data' => $posts]);
     }
@@ -34,7 +37,7 @@ class PostController extends Controller
                 "content" => $request->content
             ]);
 
-            if($request->tags){
+            if($request->tags) {
                 $post->tags()->attach($request->tags);
             }
 
@@ -46,8 +49,11 @@ class PostController extends Controller
 
        public function show(string $id)
     {
-        {
-            £
+        try {
+            $post = Post::findOrFail($id);
+            return response()->json(['success' => true, 'data' => $post]);
+        } catch (\Throwable $th) {
+            return response()->json(['success' => false, 'msg' => $th->getMessage], 400);
         }
     }
 
@@ -63,12 +69,6 @@ class PostController extends Controller
             [
                 'required' => 'Faltou :attribute'
             ]);
-
-            if($request->tags){
-                $post->tags()->sync($request->tags);
-            } else {
-                $post->tags()->detach();
-            }
 
             $post->content = $request->content;
             $post->save();

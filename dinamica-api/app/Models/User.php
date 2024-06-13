@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
+use Symfony\Component\HttpKernel\Profiler\Profile;
 
 class User extends Authenticatable
 {
@@ -55,24 +56,16 @@ class User extends Authenticatable
             ->toArray();
     }
 
-    public static function getLikesAmount()
-    {
-        return Like::select('users.name', DB::raw('count(userId) as totalLikes'))
-            ->join('users', 'users.id', '=', 'likes.userId')
-            ->groupBy('users.name')
-            ->orderBy('totalLikes', 'desc')
-            ->limit(1)
-            ->get();
-    }
-
-    public function posts(){
+    public function posts() {
         return $this->hasMany(Post::class, 'userId');
     }
 
-    public function profile(){
-        return $this->hasOne(Profile::class);// hasOne = "possui um"
+    public function profile() {
+        return $this->hasOne(Profile::class);
     }
-    public function likes(){
+
+    public function likes() {
         return $this->hasMany(Like::class, 'userId');
     }
+
 }

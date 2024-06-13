@@ -6,9 +6,12 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::table('likes', function(Blueprint $table){
+        Schema::table('likes', function (Blueprint $table) {
             $table->unsignedBigInteger('postId')->change();
         });
 
@@ -22,11 +25,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('likes', function (Blueprint $table){
+        Schema::table('likes', function (Blueprint $table) {
             $table->integer('postId')->change();
         });
-        Schema::table('likes', function (Blueprint $table) {
-         $table->dropForeign(['postId']);
+
+        Schema::table('likes', function(Blueprint $table){
+            $table->dropForeign(['postId']);
         });
     }
 };
