@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Book;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -13,8 +12,8 @@ class BorrowingController extends Controller
      */
     public function index()
     {
-        $data = User::with('books')->get();
-        return response()->json(['success' => true, 'msg' => 'Tags listadas com sucesso.', 'data' => $data]);
+        $emprestimos = User::with('books')->get();
+        return $emprestimos;
     }
 
     /**
@@ -31,14 +30,13 @@ class BorrowingController extends Controller
 
             $user = User::find($request->user_id);
 
-            // criando registros a tabela pivô
+
             $user->books()->attach($request->book_id, [
-                'borrowed_at' => now(),
+                'borrowed_at' =>  now(),
                 'due_date' => $request->due_date
             ]);
 
-            return response()->json(['success' => true, 'msg' => 'Empréstimo realizado com sucesso!', 'data' => $user->books], 201);
-
+            return response()->json(['success' => true, 'msg' => 'Emprestimo Realizado com sucesso!', 'data' => $user->books], 201);
         } catch (\Throwable $th) {
             return response()->json(['success' => false, 'msg' => $th->getMessage()], 400);
         }
@@ -47,31 +45,52 @@ class BorrowingController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(int $user_id, int $book_id)
     {
         try {
+            $user = User::find($user_id);
 
-            $post = ;
+            $book = $user->books()->where('book_id', $book_id)->firstOrFail();
 
-            return response()->json(['success' => true, 'data' => $post]);
+            return $book;
         } catch (\Throwable $th) {
-            return response()->json(['success' => false, 'msg' => $th->getMessage], 400);
+            return  $th->getMessage();
         }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, int $user_id, int $book_id)
     {
-        //
+        try {
+            $request->validate([
+                'due_date' => 'required|date'
+            ]);
+
+            $user = User::findOrFail($user_id);
+            $user->books()->updateExistingPivot($book_id, [
+                'due_date' => $request->due_date
+            ]);
+
+            return  $user->books()->where('book_id', $book_id)->first();
+        } catch (\Exception $e) {
+            return  $e->getMessage();
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(int $user_id, int $book_id)
     {
-        //
+        try {
+            $user = User::findOrFail($user_id);
+            $user->books()->detach($book_id);
+
+            return 'Empréstimo removido com sucesso!';
+        } catch (\Exception $e) {
+            return  $e->getMessage();
+        }
     }
 }

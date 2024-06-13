@@ -18,7 +18,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::apiResource('authors', AuthorController::class);
-Route::apiResource('books', BookController::class);
-Route::apiResource('users', UserController::class);
-Route::apiResource('borrowings', BorrowingController::class);
+Route::prefix('borrowings')->group(function () {
+    Route::get('/', [BorrowingController::class, 'index']);
+    Route::post('/', [BorrowingController::class, 'store']);
+    Route::get('/{user_id}/{book_id}', [BorrowingController::class, 'show']);
+    Route::put('/{user_id}/{book_id}', [BorrowingController::class, 'update']);
+    Route::delete('/{user_id}/{book_id}', [BorrowingController::class, 'destroy']);
+});
